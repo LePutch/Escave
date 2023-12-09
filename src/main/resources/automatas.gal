@@ -1,0 +1,112 @@
+Block(Init){
+	*(Init)
+	|GotPower? :(Init)
+    |True ?  :()
+ }
+ 
+ Stalactite(Accrocher){
+	*(Accrocher)
+	|Closest(@,S)?Wizz:(Air)
+	|True? :(Accrocher)
+ 
+    *(Air)
+    |Cell(H,@)?Pop:(Mort)
+    |Cell(H,A)?Pop:(Air)
+    |Cell(S,J)?:(Mort)
+	|True? :(Air)
+	
+	*(Mort)
+	|Cell(S,J)?Protect(S):()
+	|True?:(Mort)
+}
+    
+
+
+Block_special(Init){
+    *(Init)
+    |Cell(N,@)?Wizz:(Activer)
+    |True?    :(Init)
+    
+	*(Activer)
+    |True?    :(Activer)
+}
+
+
+
+Consummable(Init){
+    *(Init)
+}
+
+Inventaire(Init){
+	*(Non_plein)
+	|Cell(N,P)&(GotStuff)?Wizz(N) :(Plein)
+	|Cell(S,P)&(GotStuff)? Wizz(S):(Plein)
+	|Cell(W,P)&(GotStuff)? Wizz(W):(Plein)
+	|Cell(E,P)&(GotStuff)? Wizz(E):(Plein)
+	|Cell(N,P)? Wizz(N) :(Non_plein)
+	|Cell(S,P)? Wizz(S):(Non_plein)
+	|Cell(W,P)? Wizz(W):(Non_plein)
+	|Cell(E,P)? Wizz(E):(Non_plein)
+    |Key(t)&GotStuff? Throw:(Non_plein)
+    |Key(j)?Get():(Non_plein)
+    |Key(p)&GotStuff?Pop:(Non_plein)
+	|True?		:(Non_plein)
+	
+	*(Plein)
+	|Key(p)?Pop:(Non_plein)
+	|Key(t)? Throw:(Non_plein)
+	|Key(j)?Get:(Plein)
+	|GotStuff?     :(Non_plein)
+	|True?		:(Plein)
+}
+
+Player(Init){
+	*(Init)
+	| Key(FU) & Cell(S, J) ? Jump :(Init)
+	| Key(FL) ? Move(W) :(Init)
+	| Key(FR) ? Move(E) :(Init)
+	| Key(FD) ? Move(S) :(Doublure)
+	| Key(SPACE)&Key(d) ? Pop(E) :(Init)
+	| Key(SPACE)&Key(q) ? Pop(W) :(Init)
+	| Key(SPACE)&Key(z) ? Pop(N) :(Init)
+	
+	*(Statue)
+	| True ? :(Statue)
+	
+	*(Doublure)
+	| Key(FU) ? Pop(N) :(Init)
+	| True ? :(Doublure)
+}
+
+Mushroom(Init){
+	*(Init):
+	| !GotPower() ? : (Mort)
+	| Cell(W,@) ? Move(S) & Pop(W) :(Cooldown3000)
+	| Cell(H,@) ? Move(S) & Pop(E) :(Cooldown3000)
+
+	| Closest(@,E) & Cell(E,J) ? Wizz(NE) :(Init)
+	| Closest(@,W) & Cell(W,J) ? Wizz(NW) :(Init)
+	
+	| Closest(@,E) ? Move(E) :(Init)
+	| Closest(@,W) ? Move(W) :(Init)
+
+	| True ? Move(S) :(Init)
+	
+	*(Cooldown3000)
+	| True ? :(Init)
+	
+	
+}
+
+Statue(Init){
+	*(Init):
+	|Cell(H,@) ? Wizz() :(Init)
+	|True? :(Init)
+}
+
+Socle(Init){
+	*(Init):
+	|Cell(N,@) ? Wizz() :(Init)
+	|Cell(N,T) ? Wizz() :(Init)
+	|True ? :(Init)
+}
